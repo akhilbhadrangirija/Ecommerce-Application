@@ -48,10 +48,20 @@ router.get('/add-product',function(req,res){
   res.render('admin/add-product',{admin:true})
 })
 router.post('/add-product',(req,res)=>{
-  console.log(req.body);
-  console.log(req.body.files.Image);
-  productHelper.addProduct(req.body,(result)=>{
+   console.log(req.body);
+   var image = req.files.Image;
+   
+  productHelper.addProduct(req.body,(id)=>{
+    image.mv('./public/product-images/'+id+'.jpg',(err,done)=>{
+      if(!err){
     res.render("admin/add-product")
+      }else{
+        console.log(err);
+      res.render("admin/add-product")
+
+      }
+      
+    })
   })
 })
 module.exports = router;

@@ -14,6 +14,6 @@ module.exports.connect=function(done){
         done()
     })
 }
-module.exports.get=function(){
+module.exports.database=function(){
     return state.db
 }

@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var fileUpload=require('express-fileupload')
+
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var hbs = require('express-handlebars');
@@ -14,6 +16,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}));
+
+app.use(fileUpload());
 
 app.use(logger('dev'));
 app.use(express.json());

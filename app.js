@@ -3,8 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var db=require('./configuration/connection')
-var fileUpload=require('express-fileupload')
+var db=require('./configuration/connection');
+var fileUpload = require('express-fileupload');
 
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
@@ -32,7 +32,10 @@ db.connect((err)=>{
   else{
     console.log("Database connected");
   }
-})
+});
+
+
+
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
 

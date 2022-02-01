@@ -14,7 +14,7 @@ module.exports={
           await bcrypt.hash(myPlaintextPassword, 10,  function(err, hash) {
             users.password=hash;
 
-          console.log(users.password);
+          // console.log(users);
           db.database().collection(collections.USER_DATA).insertOne(users).then((data)=>{
             console.log(data);
             })

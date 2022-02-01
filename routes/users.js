@@ -10,8 +10,10 @@ var userHelpers = require('../helpers/user-helper')
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
+let user=req.session.user
+console.log(user);
   productHelper.getAllProducts().then((productsForDisplay)=>{
-    res.render('user/index',{productsForDisplay,admin:false})
+    res.render('user/index',{productsForDisplay,user})
   })
  
 });
@@ -33,14 +35,21 @@ router.post('/signup',(req,res)=>{
 router.post('/login',(req,res)=>{
   userHelpers.getUser(req.body).then((respones)=>{
     if(respones.status){
-      console.log("login sucess");
+      // console.log("login sucess");
+      req.session.loggedIn=true
+      req.session.user=response.user
       res.redirect('/')
     }else{
-      console.log("login failed");
+      // console.log("login failed");
       res.redirect('/login')
     }
   })
 });
+router.get('/logout',(req,res)=>{
+    res.session.destroy()
+    res.redirect('/')
+    
+})
 
 
 

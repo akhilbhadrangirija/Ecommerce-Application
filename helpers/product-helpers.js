@@ -15,14 +15,14 @@ module.exports={
             resolve(productsForDisplay)
         })
     },
-    deleteProduct:()=>{
-        return new Promise (async(resolve,reject)=>{
-             db.database().collection(collections.PRODUCT_COLLECTION).removeOne({_id:objectId(productId)}).then((response)=>{
+    deleteProduct:(productId)=>{
+        return new Promise ((resolve,reject)=>{
+            console.log(productId);
+             db.database().collection(collections.PRODUCT_COLLECTION).deleteOne({_id:objectId(productId)}).then((response)=>{
                  resolve(response)
 
             })
             // console.log(productsForDisplay)
-            resolve(productsForDisplay)
         })
         
 

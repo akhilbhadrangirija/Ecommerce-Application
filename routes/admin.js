@@ -32,7 +32,7 @@ router.post('/add-product',(req,res)=>{
   })
 })
 
-router.get('/delete-product/:id',(req,res)=>{
+router.post('/delete-product/:id',(req,res)=>{
   let productId=req.params.id
   // console.log(productId);
   productHelper.deleteProduct(productId).then((response)=>{
@@ -40,6 +40,28 @@ router.get('/delete-product/:id',(req,res)=>{
   })
 
 
+})
+router.get('/edit-product/:id',(req,res)=>{
+  let productId=req.params.id
+
+  productHelper.getOneProducts(productId).then((response)=>{
+    // console.log(response._id);
+
+  res.render('admin/edit-product',{response})
+
+
+
+  })
+
+
+  
+})
+router.post('/view-products',(req,res)=>{
+
+
+  productHelper.editProduct(req.body).then((response)=>{
+    res.redirect('/admin')
+  })
 })
 
 module.exports = router;

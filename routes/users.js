@@ -2,6 +2,7 @@ const { response } = require('express');
 var express = require('express');
 const { status } = require('express/lib/response');
 const res = require('express/lib/response');
+const async = require('hbs/lib/async');
 var router = express.Router();
 
 var productHelper = require('../helpers/product-helpers')
@@ -72,9 +73,12 @@ router.get('/logout',(req,res)=>{
     res.redirect('/')
     
 })
-router.get('/cart',verifyLogin,(req,res)=>{
-  
-    res.render('user/cart')
+router.get('/cart',verifyLogin,async(req,res)=>{
+ 
+  let products=await userHelpers.getCartProducts(req.session.user._id)
+   let cartItem=products[0].cartItems
+   console.log(cartItem);
+    res.render('user/cart',{cartItem})
 
  
 })
@@ -82,7 +86,7 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
   
   //  console.log(req.params.id);
   userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
-    
+
     res.redirect('/')
 
   })

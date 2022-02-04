@@ -23,7 +23,7 @@ const verifyLogin=(req,res,next)=>{
 router.get('/', function(req, res, next) {
 
 let user=req.session.user
-console.log(user);
+// console.log(user);
   productHelper.getAllProducts().then((productsForDisplay)=>{
     res.render('user/index',{productsForDisplay,user})
   })
@@ -75,6 +75,18 @@ router.get('/logout',(req,res)=>{
 router.get('/cart',verifyLogin,(req,res)=>{
   
     res.render('user/cart')
+
+ 
+})
+router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
+  
+  //  console.log(req.params.id);
+  userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
+    
+    res.redirect('/')
+
+  })
+  
 
  
 })

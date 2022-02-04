@@ -3,6 +3,8 @@ var db=require('../configuration/connection')
 var collections = require('../configuration/collections')
 const bcrypt = require('bcrypt');
 const { response } = require('express');
+var objectId = require('mongodb').ObjectId
+
 module.exports={
 
  addUser: async (users,callback)=>{
@@ -16,7 +18,7 @@ module.exports={
 
           // console.log(users);
           db.database().collection(collections.USER_DATA).insertOne(users).then((data)=>{
-            console.log(data);
+            // console.log(data);
             })
 
 
@@ -34,7 +36,7 @@ module.exports={
         let respose={}
       let user= await db.database().collection(collections.USER_DATA).findOne({email:userData.email})
       if(user){
-          console.log("user here");
+          // console.log("user here");
           
             bcrypt.compare(userData.password,user.password).then((status)=>{
               if(status){
@@ -61,6 +63,31 @@ module.exports={
     })
 
    
+
+ },
+ addToCart:(proId,userId)=>{
+      return new Promise(async(resolve,reject)=>{
+        let user= await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
+        if(user){ 
+          db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId)},
+              {
+                $push:{products:objectId(proId)}
+                
+              }).then((response)=>{
+                resolve(response)
+              })
+        }else{
+          let cartObj={
+            user:objectId(userId),
+            products:[objectId(proId)]
+          }
+          db.database().collection(collections.CART_COLLECTIONS).insertOne(cartObj).then((response)=>{
+            resolve(response)
+          })
+
+
+        }
+      })
 
  }
 

@@ -84,8 +84,10 @@ router.get('/cart',verifyLogin,async(req,res)=>{
  
   let products=await userHelpers.getCartProducts(req.session.user._id)
    let cartItem=products[0].cartItems
+   let cartItemLength=cartItem.length
   //  console.log(cartItem);
-    res.render('user/cart',{cartItem})
+  let user=req.session.user
+    res.render('user/cart',{cartItem,user,cartItemLength})
 
  
 })

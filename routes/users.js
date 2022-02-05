@@ -25,6 +25,7 @@ router.get('/', function(req, res, next) {
 
 let user=req.session.user
 // console.log(user);
+// let cartCount=userHelpers.getCartCount(req.session.user)
   productHelper.getAllProducts().then((productsForDisplay)=>{
     res.render('user/index',{productsForDisplay,user})
   })
@@ -77,8 +78,9 @@ router.get('/cart',verifyLogin,async(req,res)=>{
  
   let products=await userHelpers.getCartProducts(req.session.user._id)
    let cartItem=products[0].cartItems
-   console.log(cartItem);
-    res.render('user/cart',{cartItem})
+   console.log(cartItem.length);
+  //  console.log(cartItem);
+    res.render('user/cart',{cartItem,user:req.session.user})
 
  
 })

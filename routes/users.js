@@ -21,12 +21,19 @@ const verifyLogin=(req,res,next)=>{
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',async(req, res, next)=> {
 
 let user=req.session.user
 // console.log(user);
+
+let cartItem=await userHelpers.getCartProducts(user._id)
+let cartItemLength=cartItem[0].cartItems.length
+console.log(cartItemLength);
+
+
+
   productHelper.getAllProducts().then((productsForDisplay)=>{
-    res.render('user/index',{productsForDisplay,user})
+    res.render('user/index',{productsForDisplay,user,cartItemLength})
   })
  
 });
@@ -77,7 +84,7 @@ router.get('/cart',verifyLogin,async(req,res)=>{
  
   let products=await userHelpers.getCartProducts(req.session.user._id)
    let cartItem=products[0].cartItems
-   console.log(cartItem);
+  //  console.log(cartItem);
     res.render('user/cart',{cartItem})
 
  

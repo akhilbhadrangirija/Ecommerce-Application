@@ -116,6 +116,24 @@ module.exports={
      ]).toArray()
      resolve(cartItems)
    })
+ },
+ deleteCartItem:(productId,userId)=>{
+   return new Promise((resolve,reject)=>{
+    db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(userId)},{"$pull":{"products":{_id:objectId(productId)}}}).then((response)=>{
+      resolve(response)
+    })
+
+
+
+
+//     db.database().collection(collections.CART_COLLECTIONS).deleteOne({_id:objectId(productId)}).then((response)=>{
+//       resolve(response)
+//       console.log(response);
+
+//  })
+
+
+   })
  }
 
 }

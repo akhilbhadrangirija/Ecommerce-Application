@@ -103,6 +103,15 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
 
  
 })
+router.get('/cart/delete/:id',(req,res)=>{
+  let productId=req.params.id
+  let userId=req.session.user._id
+ console.log(productId);
+  userHelpers.deleteCartItem(productId,userId).then((response)=>{
+    res.redirect('/cart')
+
+  })
+})
 
 
 

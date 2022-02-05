@@ -23,7 +23,7 @@
       <td>{{this.Price}}</td>
       <td><button class="cart-item mr-3 btn-secondary">-</button>1 <button class="cart-item ml-3 btn-success">+</button></td>
       <td><img style="width: 50px; height:50px" src="/product-images/{{this._id}}.jpg" alt=""></td>
-      <td><button class="btn-danger">Delete</button></td>
+      <td><button  class="btn-danger"><a style="color: white; text-decoration:none;" href="/cart/delete/{{this._id}}">Delete</a></button></td>
       
     </tr>
     {{/each}}

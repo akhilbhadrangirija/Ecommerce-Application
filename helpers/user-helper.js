@@ -118,8 +118,10 @@ module.exports={
    })
  },
  deleteCartItem:(productId,userId)=>{
+   console.log(objectId(userId));
+   console.log(productId);
    return new Promise((resolve,reject)=>{
-    db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(userId)},{"$pull":{"products":{_id:objectId(productId)}}}).then((response)=>{
+    db.database().collection(collections.CART_COLLECTIONS).updateOne({"user":objectId(userId)},{"$pull":{"products":objectId(productId)}}).then((response)=>{
       resolve(response)
     })
 

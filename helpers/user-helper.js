@@ -66,20 +66,41 @@ module.exports={
 
  },
  addToCart:(proId,userId)=>{
+   let proObj={
+     item:objectId(proId),
+     quantity:1
+
+   }
       return new Promise(async(resolve,reject)=>{
-        let user= await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
-        if(user){ 
-          db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId)},
+        let userCart= await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
+        if(userCart){ 
+          // console.log(userCart);
+          let proExist=userCart.products.findIndex(product=> product.item==proId)
+          console.log(proExist)
+          if(proExist!=-1){
+            db.database().collection(collections.CART_COLLECTIONS).updateOne({'products.item':objectId(proId)},
+            {
+              $inc:{'products.$.quantity':1}
+            }
+            ).then((response)=>{
+              resolve()
+            })
+           
+          }else{
+            db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId)},
               {
-                $push:{products:objectId(proId)}
+                $push:{products:proObj}
                 
               }).then((response)=>{
                 resolve(response)
               })
+          }
+
+          
         }else{
           let cartObj={
             user:objectId(userId),
-            products:[objectId(proId)]
+            products:[proObj]
           }
           db.database().collection(collections.CART_COLLECTIONS).insertOne(cartObj).then((response)=>{
             resolve(response)
@@ -98,22 +119,24 @@ module.exports={
 
        },
        {
+         $unwind:'$products'
+       },
+       {
+         $project:{
+           item:'$products.item',
+           quantity:'$products.quantity'
+         }
+       },{
          $lookup:{
            from:collections.PRODUCT_COLLECTION,
-           let:{proList:'$products'},
-           pipeline:[
-             {
-                $match:{
-                  $expr:{
-                    $in:['$_id',"$$proList"]
-                  }
-                }
-             }
-           ],
-           as:'cartItems'
+           localField:'item',
+           foreignField:'_id',
+           as:'products'
          }
        }
+     
      ]).toArray()
+     console.log(cartItems);
      resolve(cartItems)
    })
  },

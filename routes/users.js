@@ -83,19 +83,22 @@ router.get('/logout',(req,res)=>{
 router.get('/cart',verifyLogin,async(req,res)=>{
  
   let products=await userHelpers.getCartProducts(req.session.user._id)
-   let cartItem=products[0].cartItems
-   console.log(cartItem.length);
-  //  console.log(cartItem);
-    res.render('user/cart',{cartItem,user:req.session.user})
+
+  // console.log(products);
+  
+    res.render('user/cart',{products,user:req.session.user})
 
  
 })
 router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
+  // console.log("api call");
   
   //  console.log(req.params.id);
-  userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
+  userHelpers.addToCart(req.params.id,req.session.user._id).then((response)=>{
 
-    res.redirect('/')
+    res.json({status:true})
+    // res.redirect('/')
+
 
   })
   

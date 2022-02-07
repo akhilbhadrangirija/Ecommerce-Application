@@ -78,7 +78,7 @@ module.exports={
           let proExist=userCart.products.findIndex(product=> product.item==proId)
           console.log(proExist)
           if(proExist!=-1){
-            db.database().collection(collections.CART_COLLECTIONS).updateOne({'products.item':objectId(proId)},
+            db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId),'products.item':objectId(proId)},
             {
               $inc:{'products.$.quantity':1}
             }
@@ -133,10 +133,16 @@ module.exports={
            foreignField:'_id',
            as:'products'
          }
+       },
+       {
+         $project:{
+           item:1,quantity:1,product:{$arrayElemAt:['$products',0]}
+         }
        }
+
      
      ]).toArray()
-     console.log(cartItems);
+    //  console.log(cartItems);
      resolve(cartItems)
    })
  },
@@ -149,6 +155,20 @@ module.exports={
        
      }
      resolve(count)
+
+   })
+ },
+ changeProductQuantity:(details)=>{
+  //  console.log(details.count);
+  details.count=parseInt(details.count)
+   return new Promise((resolve,reject)=>{
+    db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart),'products.item':objectId(details.product)},
+    {
+      $inc:{'products.$.quantity':details.count}
+    }
+    ).then((response)=>{
+      resolve()
+    })
 
    })
  }

@@ -160,15 +160,42 @@ module.exports={
  },
  changeProductQuantity:(details)=>{
   //  console.log(details.count);
+  details.quantity=parseInt(details.quantity)
   details.count=parseInt(details.count)
+  console.log(details.count);
+  console.log(details.quantity);
+
    return new Promise((resolve,reject)=>{
-    db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart),'products.item':objectId(details.product)},
-    {
-      $inc:{'products.$.quantity':details.count}
-    }
-    ).then((response)=>{
-      resolve()
-    })
+     if(details.count==-1&&details.quantity==1){
+      db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart)},
+      {
+        $pull:{products:{item:objectId(details.product)}}
+      }
+      ).then((response)=>{
+        resolve({removeProduct:true})
+      })
+
+     }else if(details.count==details.quantity){db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart)},
+     {
+       $pull:{products:{item:objectId(details.product)}}
+     }
+     ).then((response)=>{
+       resolve({removeProduct:true})
+     })
+
+     }
+     
+     else{
+      db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart),'products.item':objectId(details.product)},
+      {
+        $inc:{'products.$.quantity':details.count}
+      }
+      ).then((response)=>{
+        resolve(response)
+      })
+
+     }
+    
 
    })
  }

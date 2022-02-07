@@ -1,63 +1,75 @@
 <section>
-    <div class="container">
-        <div class="row mt-4">
-            <a href="/" class="btn btn-success ml-auto">continue shopping</a>
-        </div>
-        <table class="table mt-5">
-  <thead>
-    <tr>
-      {{!-- <th scope="col">#</th> --}}
-      <th scope="col">Product</th>
-      <th scope="col">category</th>
-      <th scope="col">Price</th>
-      <th scope="col">image</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each products}}
-
-    
-    <tr>
-      {{!-- <th scope="row">Item</th> --}}
-      <td><img style="width: 50px; height:50px" src="/product-images/{{this.product._id}}.jpg" alt=""></td>
-
-      <td>{{this.product.Name}}</td>
-      <td>{{this.product.Category}}</td>
-      <td>{{this.product.Price}}</td>
-
-      <td >
-        <button onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)" class="cart-item-count mr-3 btn-secondary">-</button><span id="proCount">{{this.quantity}}</span><button class="cart-item-count btn-success ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
-      </td>
-
-      <td><button class="btn btn-danger">Remove</button></td>
-      
-    </tr>
-    
-    {{/each}}
-   
-  </tbody>
-</table>
+  <div class="container">
+    <div class="row mt-4">
+      <a href="/" class="btn btn-success ml-auto">continue shopping</a>
     </div>
+    <table class="table mt-5">
+      <thead>
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Product</th>
+          <th scope="col">category</th>
+          <th scope="col">Price</th>
+          <th scope="col">Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+
+
+        <tr>
+          {{!-- <th scope="row">Item</th> --}}
+          <td><img style="width: 50px; height:50px" src="/product-images/{{this.product._id}}.jpg" alt=""></td>
+
+          <td>{{this.product.Name}}</td>
+          <td>{{this.product.Category}}</td>
+          <td>Rs.{{this.product.Price}}</td>
+
+          <td>
+            <button onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)"
+              class="cart-item-count mr-3 btn-secondary">-</button><span
+              id="{{this.product._id}}">{{this.quantity}}</span><button class="cart-item-count btn-success ml-3"
+              onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
+          </td>
+
+          <td><button onclick="changeQuantity('{{this._id}}','{{this.product._id}}',{{this.quantity}})"
+              class="btn btn-danger">Remove</button></td>
+
+        </tr>
+        
+        {{/each}}
+
+      </tbody>
+    </table>
+    <hr>
+    <div class="float-right pr-3">
+    <h4 class="float-left mr-5 ">Total:</h4>
+    <a class="btn btn-warning mt-3" style="width: 100%;" href="/place-order">Place order</a>
+    </div>
+  </div>
 </section>
 <script>
-  function changeQuantity(cartId,productId,count){
+  function changeQuantity(cartId, productId, count) {
+    let quantity = parseInt(document.getElementById(productId).innerHTML)
+    count = parseInt(count)
     $.ajax({
-      url:'/change-product-quantity',
-      data:{
-        cart:cartId,
-        product:productId,
-        count:count
+      url: '/change-product-quantity',
+      data: {
+        cart: cartId,
+        product: productId,
+        count: count,
+        quantity: quantity
 
       },
-      method:'post',
-      success:(response)=>{
-        if(response.status){
-                let count=$('#proCount').html()
-                alert(count)
-                count=parseInt(count)+1
-                $("#proCount").html(count)
-            }
-         
+      method: 'post',
+      success: (response) => {
+        if (response.removeProduct) {
+          alert("Product removed")
+          location.reload()
+        } else {
+          document.getElementById(productId).innerHTML = quantity + count
+        }
+
       }
     })
   }

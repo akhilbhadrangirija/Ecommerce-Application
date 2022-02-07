@@ -110,7 +110,7 @@ router.post('/change-product-quantity',(req,res,next)=>{
   userHelpers.changeProductQuantity(req.body).then((response)=>{
 
     // res.redirect('/user/cart')
-    res.json({status:true})
+    res.json(response)
 
 
   })

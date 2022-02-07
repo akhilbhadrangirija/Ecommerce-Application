@@ -27,10 +27,19 @@
     {{/each}}
 
       <td>
-        <button class="cart-item-count mr-3 btn-secondary">-</button>{{this.quantity}}<button class="cart-item-count btn-success ml-3">+</button>
+      {{#each this.products}}
+
+        <a href="/remove-from-cartItems/{{this._id}}" class="cart-item-count mr-3 btn-secondary">-</a>
+    {{/each}}
+
+        {{this.quantity}}
+      {{#each this.products}}
+
+        <a href="/add-to-cartItems/{{this._id}}" class="cart-item-count btn-success ml-3">+</a>
       </td>
 
-      <td><button class="btn btn-danger">Remove</button></td>
+      <td><a href="/user/remove-from-cart" class="btn btn-danger">Remove</a></td>
+    {{/each}}
       
     </tr>
     

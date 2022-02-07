@@ -111,6 +111,96 @@ module.exports={
       })
 
  },
+ addToCart:(proId,userId)=>{
+  let proObj={
+    item:objectId(proId),
+    quantity:1
+
+  }
+     return new Promise(async(resolve,reject)=>{
+       let userCart= await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
+       if(userCart){ 
+         // console.log(userCart);
+         let proExist=userCart.products.findIndex(product=> product.item==proId)
+         console.log(proExist)
+         if(proExist!=-1){
+           db.database().collection(collections.CART_COLLECTIONS).updateOne({'products.item':objectId(proId)},
+           {
+             $inc:{'products.$.quantity':1}
+           }
+           ).then((response)=>{
+             resolve()
+           })
+          
+         }else{
+           db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId)},
+             {
+               $push:{products:proObj}
+               
+             }).then((response)=>{
+               resolve(response)
+             })
+         }
+
+         
+       }else{
+         let cartObj={
+           user:objectId(userId),
+           products:[proObj]
+         }
+         db.database().collection(collections.CART_COLLECTIONS).insertOne(cartObj).then((response)=>{
+           resolve(response)
+         })
+
+
+       }
+     })
+
+},
+removeFromCartItems:(proId,userId)=>{
+  
+     return new Promise(async(resolve,reject)=>{
+       let userCart= await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
+       console.log(userCart);
+       if(userCart){ 
+         // console.log(userCart);
+         let proExist=userCart.products.findIndex(product=> product.item==proId)
+         console.log(proExist)
+         if(proExist!=-1){
+           db.database().collection(collections.CART_COLLECTIONS).updateOne({'products.item':objectId(proId)},
+           {
+             $inc:{'products.$.quantity':-1}
+           }
+           ).then((response)=>{
+             resolve()
+           })
+          
+         }
+        //  else{
+        //    db.database().collection(collections.CART_COLLECTIONS).updateOne({user:objectId(userId)},
+        //      {
+        //        $push:{products:proObj}
+               
+        //      }).then((response)=>{
+        //        resolve(response)
+        //      })
+        //  }
+
+        }
+      //  else{
+      //    let cartObj={
+      //      user:objectId(userId),
+      //      products:[proObj]
+      //    }
+      //    db.database().collection(collections.CART_COLLECTIONS).insertOne(cartObj).then((response)=>{
+      //      resolve(response)
+      //    })
+
+
+      //  }
+     })
+
+},
  getCartProducts:(userId)=>{
    return new Promise(async(resolve,reject)=>{
      let cartItems=await db.database().collection(collections.CART_COLLECTIONS).aggregate([
@@ -136,7 +226,7 @@ module.exports={
        }
      
      ]).toArray()
-     console.log(cartItems);
+    //  console.log(cartItems);
      resolve(cartItems)
    })
  },

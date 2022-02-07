@@ -96,8 +96,38 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
   //  console.log(req.params.id);
   userHelpers.addToCart(req.params.id,req.session.user._id).then((response)=>{
 
-    res.json({status:true})
-    // res.redirect('/')
+    // res.json({status:true})
+    res.redirect('/')
+
+
+  })
+  
+
+ 
+})
+router.get('/add-to-cartItems/:id',verifyLogin,(req,res)=>{
+  // console.log("api call");
+  
+  //  console.log(req.params.id);
+  userHelpers.addToCart(req.params.id,req.session.user._id).then((response)=>{
+
+    // res.json({status:true})
+    res.redirect('/cart')
+
+
+  })
+  
+
+ 
+})
+router.get('/remove-from-cartItems/:id',verifyLogin,(req,res)=>{
+  // console.log("api call");
+  
+  //  console.log(req.params.id);
+  userHelpers.removeFromCartItems(req.params.id,req.session.user._id).then((response)=>{
+
+    // res.json({status:true})
+    res.redirect('/cart')
 
 
   })

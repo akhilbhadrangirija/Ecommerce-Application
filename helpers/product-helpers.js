@@ -4,6 +4,7 @@ var collections = require('../configuration/collections')
 var objectId = require('mongodb').ObjectId
 module.exports={
     addProduct:(product,callback)=>{
+        console.log(product);
         db.database().collection('products').insertOne(product).then((data)=>{
         callback(data.insertedId)
         })

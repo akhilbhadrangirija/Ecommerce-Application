@@ -18,6 +18,8 @@ router.get('/add-product',function(req,res){
 })
 router.post('/add-product',(req,res)=>{
    var image = req.files.Image;
+   req.body.Price=parseInt(req.body.Price)
+  //  console.log(req.body);
    
   productHelper.addProduct(req.body,(id)=>{
     image.mv('./public/product-images/'+id+'.jpg',(err,done)=>{
@@ -47,6 +49,7 @@ router.get('/edit-product/:id',async(req,res)=>{
 })
 router.post('/edit-product/:id',(req,res)=>{
   let id=req.params.id
+  req.body.Price=parseInt(req.body.Price)
   productHelper.updateProduct(id,req.body).then(()=>{
     res.redirect('/admin')
     if(req.files.Image){

@@ -142,7 +142,7 @@ module.exports={
 
      
      ]).toArray()
-     console.log(cartItems);
+    //  console.log(cartItems);
      resolve(cartItems)
    })
  },
@@ -162,8 +162,8 @@ module.exports={
   //  console.log(details.count);
   details.quantity=parseInt(details.quantity)
   details.count=parseInt(details.count)
-  console.log(details.count);
-  console.log(details.quantity);
+  // console.log(details.count);
+  // console.log(details.quantity);
 
    return new Promise((resolve,reject)=>{
      if(details.count==-1&&details.quantity==1){
@@ -175,7 +175,7 @@ module.exports={
         resolve({removeProduct:true})
       })
 
-     }else if(details.count==details.quantity){db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart)},
+     }else if(details.count==(-details.quantity)){db.database().collection(collections.CART_COLLECTIONS).updateOne({_id:objectId(details.cart)},
      {
        $pull:{products:{item:objectId(details.product)}}
      }
@@ -191,7 +191,7 @@ module.exports={
         $inc:{'products.$.quantity':details.count}
       }
       ).then((response)=>{
-        resolve(response)
+        resolve({status:true})
       })
 
      }
@@ -237,7 +237,7 @@ module.exports={
 
     
     ]).toArray()
-    console.log(total[0].total);
+    // console.log(total[0].total);
     resolve(total[0].total)
   })
 

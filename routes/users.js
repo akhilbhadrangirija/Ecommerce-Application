@@ -81,12 +81,14 @@ router.get('/logout',(req,res)=>{
     
 })
 router.get('/cart',verifyLogin,async(req,res)=>{
- 
-  let products=await userHelpers.getCartProducts(req.session.user._id)
 
-  // console.log(products);
-  
-    res.render('user/cart',{products,user:req.session.user})
+  // let totalValue=0
+  let products=await userHelpers.getCartProducts(req.session.user._id)
+  totalValue=await userHelpers.getTotalAmount(req.session.user._id)
+
+    let user=req.session.user
+    // console.log(user);
+    res.render('user/cart',{products,user,totalValue})
 
  
 })
@@ -107,7 +109,8 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
 })
 router.post('/change-product-quantity',(req,res,next)=>{
   // console.log(req.body);
-  userHelpers.changeProductQuantity(req.body).then((response)=>{
+  userHelpers.changeProductQuantity(req.body).then(async(response)=>{
+    response.total =await userHelpers.getTotalAmount(req.body.user)
 
     // res.redirect('/user/cart')
     res.json(response)
@@ -116,8 +119,15 @@ router.post('/change-product-quantity',(req,res,next)=>{
   })
 })
 router.get('/place-order',verifyLogin,async (req,res)=>{
+  let user=req.session.user
   let total=await userHelpers.getTotalAmount(req.session.user._id)
-  res.render('user/place-order.hbs',{total})
+  res.render('user/place-order.hbs',{total,user})
+})
+
+
+router.post('/place-order',(req,res)=>{
+  
+  console.log(req.body);
 })
 
 

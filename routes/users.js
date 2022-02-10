@@ -121,13 +121,22 @@ router.post('/change-product-quantity',(req,res,next)=>{
 router.get('/place-order',verifyLogin,async (req,res)=>{
   let user=req.session.user
   let total=await userHelpers.getTotalAmount(req.session.user._id)
-  res.render('user/place-order.hbs',{total,user})
+  res.render('user/place-order',{total,user})
 })
 
 
-router.post('/place-order',(req,res)=>{
-  
-  console.log(req.body);
+router.post('/place-order',async(req,res)=>{
+  // let product=userHelpers.getCartProductList(req.body)
+  // console.log(req.body);
+  // res.render('user/order')
+
+  // let products=await userHelpers.getCartProducts(req.session.user._id)
+  // totalValue=await userHelpers.getTotalAmount(req.session.user._id)
+
+  //   let user=req.session.user
+  //   console.log(user);
+  //   console.log(products);
+  //   res.render('user/order',{products,user,totalValue})
 })
 
 

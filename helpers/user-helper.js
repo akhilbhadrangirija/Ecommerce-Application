@@ -263,7 +263,8 @@ module.exports={
        paymentmethod:details.payment,
        products:products,
        status:status,
-       total:total
+       total:total,
+       date:new Date()
 
      }
      db.database().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{

@@ -3,6 +3,7 @@ var db=require('../configuration/connection')
 var collections = require('../configuration/collections')
 const bcrypt = require('bcrypt');
 const { response } = require('express');
+const async = require('hbs/lib/async');
 var objectId = require('mongodb').ObjectId
 
 module.exports={
@@ -237,10 +238,49 @@ module.exports={
 
     
     ]).toArray()
+    
     // console.log(total[0].total);
     resolve(total[0].total)
   })
 
- }
+ },
+//  getOrderList:(products,user,totalValue,deldetails)=>{
+         
+//        let orderList={
+//          user:{
+//            name:user.name,
+//            id:user._id
+//          },
+//          product:[products]
+
+//          ,
+//          total:{
+//            price:totalValue
+//          },
+//          delivery:{
+//            address:deldetails.address,
+//            zip:deldetails.zip,
+//            payment:deldetails.payment
+//          }
+  
+//        }
+//        return new Promise(async(resolve,reject)=>{
+
+//        await db.database().collection(collections.ORDER_COLLECTIONS).insertOne(orderList).then((data)=>{
+//         console.log(data);
+//         resolve(data)
+
+//        })
+         
+//        })
+          
+        
+//  }
+getOrderList:(products,user,totalValue,deliverydetails)=>{
+
+}
+
+
+
 
 }

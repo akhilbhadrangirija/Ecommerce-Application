@@ -3,6 +3,7 @@ var db=require('../configuration/connection')
 var collections = require('../configuration/collections')
 const bcrypt = require('bcrypt');
 const { response } = require('express');
+const { reject } = require('bcrypt/promises');
 var objectId = require('mongodb').ObjectId
 
 module.exports={
@@ -241,6 +242,36 @@ module.exports={
     resolve(total[0].total)
   })
 
+ },
+ getCartProductList:(userId)=>{
+   return new Promise(async(resolve,reject)=>{
+     let cart=await db.database().collection(collections.CART_COLLECTIONS).findOne({user:objectId(userId)})
+   resolve(cart.products)
+    })
+ },
+ placeOrder:(details,products,total)=>{
+   return new Promise((resolve,reject)=>{
+     let status=details.payment==='cod'?'placed':'pending'
+     let orderObj={
+       deldetails:{
+         mobile:details.mobile,
+         address:details.address,
+         pin:details.zip
+
+       },
+       userId:objectId(details.userId),
+       paymentmethod:details.payment,
+       products:products,
+       status:status,
+       total:total
+
+     }
+     db.database().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
+       
+       db.database().collection(collections.CART_COLLECTIONS).drop({user:objectId(details.userId)})
+       resolve(response)
+     })
+   })
  }
 
 }

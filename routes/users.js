@@ -130,13 +130,13 @@ router.post('/place-order',async(req,res)=>{
   // console.log(req.body);
   // res.render('user/order')
 
-  // let products=await userHelpers.getCartProducts(req.session.user._id)
-  // totalValue=await userHelpers.getTotalAmount(req.session.user._id)
+  let products=await userHelpers.getCartProducts(req.session.user._id)
+  totalValue=await userHelpers.getTotalAmount(req.session.user._id)
 
-  //   let user=req.session.user
-  //   console.log(user);
-  //   console.log(products);
-  //   res.render('user/order',{products,user,totalValue})
+    let user=req.session.user
+    console.log(user);
+    console.log(products);
+    res.render('user/order',{products,user,totalValue})
 })
 
 

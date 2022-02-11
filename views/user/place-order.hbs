@@ -28,7 +28,7 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="firstName">Name</label>
-                <input type="text" name="firstname" class="form-control" id="firstName" placeholder="" value="" required>
+                <input type="text"  name="firstname" class="form-control" id="firstName" placeholder="" value="{{user.name}}" required>
                 <div class="invalid-feedback">
                   Valid first name is required.
                 </div>
@@ -40,7 +40,7 @@
 
             <div class="mb-3">
               <label for="email">Email <span class="text-muted">(Optional)</span></label>
-              <input type="email" name="email" class="form-control" id="email" placeholder="you@example.com">
+              <input type="email" value="{{user.email}}" name="email" class="form-control" id="email" placeholder="you@example.com">
               <div class="invalid-feedback">
                 Please enter a valid email address for shipping updates.
               </div>
@@ -141,11 +141,11 @@
         $.ajax({
           url:'/place-order',
           method:'post',
-          data:$('#checkout-form').serialize()
+          data:$('#checkout-form').serialize(),
           success:(response)=>{
-            alert(response)
+            
             if(response.status){
-              location.href="/user/order"
+              location.href='/order-success'
             }
           }
         })

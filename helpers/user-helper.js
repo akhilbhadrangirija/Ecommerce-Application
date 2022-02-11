@@ -267,6 +267,8 @@ module.exports={
        date:new Date()
 
      }
+     console.log(orderObj);
+    
      db.database().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
        
        db.database().collection(collections.CART_COLLECTIONS).drop({user:objectId(details.userId)})

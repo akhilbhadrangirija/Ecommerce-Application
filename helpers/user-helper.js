@@ -4,6 +4,7 @@ var collections = require('../configuration/collections')
 const bcrypt = require('bcrypt');
 const { response } = require('express');
 const { reject } = require('bcrypt/promises');
+const async = require('hbs/lib/async');
 var objectId = require('mongodb').ObjectId
 
 module.exports={
@@ -202,44 +203,50 @@ module.exports={
  },
  getTotalAmount:(userId)=>{
   return new Promise(async(resolve,reject)=>{
-    let total=await db.database().collection(collections.CART_COLLECTIONS).aggregate([
-      {
-        $match:{user:objectId(userId)}
-
-      },
-      {
-        $unwind:'$products'
-      },
-      {
-        $project:{
-          item:'$products.item',
-          quantity:'$products.quantity'
+    let cartItem=db.database().collection(collections.CART_COLLECTIONS).find({user:objectId(userId)})
+    // console.log(cartItem);
+    
+      let total=await db.database().collection(collections.CART_COLLECTIONS).aggregate([
+        {
+          $match:{user:objectId(userId)}
+  
+        },
+        {
+          $unwind:'$products'
+        },
+        {
+          $project:{
+            item:'$products.item',
+            quantity:'$products.quantity'
+          }
+        },{
+          $lookup:{
+            from:collections.PRODUCT_COLLECTION,
+            localField:'item',
+            foreignField:'_id',
+            as:'products'
+          }
+        },
+        {
+          $project:{
+            item:1,quantity:1,product:{$arrayElemAt:['$products',0]}
+          }
         }
-      },{
-        $lookup:{
-          from:collections.PRODUCT_COLLECTION,
-          localField:'item',
-          foreignField:'_id',
-          as:'products'
+        ,
+        {
+          $group:{
+            _id:null,
+            total:{$sum:{$multiply:['$quantity','$product.Price']}}
+          }
         }
-      },
-      {
-        $project:{
-          item:1,quantity:1,product:{$arrayElemAt:['$products',0]}
-        }
-      }
-      ,
-      {
-        $group:{
-          _id:null,
-          total:{$sum:{$multiply:['$quantity','$product.Price']}}
-        }
-      }
+  
+      
+      ]).toArray()
+      // console.log(total[0].total);
+      resolve(total[0].total)
 
     
-    ]).toArray()
-    // console.log(total[0].total);
-    resolve(total[0].total)
+   
   })
 
  },
@@ -267,7 +274,7 @@ module.exports={
        date:new Date()
 
      }
-     console.log(orderObj);
+    //  console.log(orderObj);
     
      db.database().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
        
@@ -275,6 +282,52 @@ module.exports={
        resolve(response)
      })
    })
+ },
+ getOrders:(userId)=>{
+   
+   return new Promise(async(resolve,reject)=>{
+    let order=await db.database().collection(collections.ORDER_COLLECTION).find({userId:objectId(userId)}).toArray()
+  resolve(order)
+   })
+  
+    
+  
+ },
+ getOrderProducts:(orderId)=>{
+  return new Promise(async(resolve,reject)=>{
+    let orderItems=await db.database().collection(collections.ORDER_COLLECTION).aggregate([
+      {
+        $match:{_id:objectId(orderId)}
+
+      },
+      {
+        $unwind:'$products'
+      },
+      {
+        $project:{
+          item:'$products.item',
+          quantity:'$products.quantity'
+        }
+      },{
+        $lookup:{
+          from:collections.PRODUCT_COLLECTION,
+          localField:'item',
+          foreignField:'_id',
+          as:'products'
+        }
+      },
+      {
+        $project:{
+          item:1,quantity:1,product:{$arrayElemAt:['$products',0]}
+        }
+      }
+
+    
+    ]).toArray()
+    // console.log(orderItems)
+    resolve(orderItems)
+  })
+
  }
 
 }

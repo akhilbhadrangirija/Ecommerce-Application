@@ -1,0 +1,35 @@
+<section>
+    <div class="container">
+        
+        <table class="table mt-5">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      
+      <th scope="col">Price</th>
+      <th scope="col">status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each orders}}
+
+    <tr>
+      <th scope="row"></th>
+      
+      <td>Date:{{this.date}}</td>
+      <td>total:{{this.total}}</td>
+      <td>status:{{this.status}}</td>
+      <form action="/admin" method="post">
+      <td><a href="/ordered-products/{{this._id}}" class="btn btn-info ml-auto" >View products</a></td>
+      
+      </form>
+
+      
+    </tr>
+    {{/each}}
+   
+  </tbody>
+</table>
+    </div>
+</section>

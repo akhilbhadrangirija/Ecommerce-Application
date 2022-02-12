@@ -6,6 +6,12 @@ const { response } = require('express');
 const { reject } = require('bcrypt/promises');
 const async = require('hbs/lib/async');
 var objectId = require('mongodb').ObjectId
+var Razorpay=require('razorpay')
+var crypto = require('crypto');
+var instance = new Razorpay({
+  key_id: 'rzp_test_o2RcHETnkKD3uk',
+  key_secret: 'a4o8rydUgGraqkBeQCpZDkn4',
+});
 
 module.exports={
 
@@ -279,7 +285,8 @@ module.exports={
      db.database().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
        
        db.database().collection(collections.CART_COLLECTIONS).drop({user:objectId(details.userId)})
-       resolve(response)
+      //  console.log(response.insertedId);
+       resolve(response.insertedId)
      })
    })
  },
@@ -326,6 +333,51 @@ module.exports={
     ]).toArray()
     // console.log(orderItems)
     resolve(orderItems)
+  })
+
+ },
+ generateRazorpay:(orederId,total)=>{
+   return new Promise((resolve,reject)=>{
+
+    var options = {
+      amount: total,  // amount in the smallest currency unit
+      currency: "INR",
+      receipt: ""+orederId
+    };
+    instance.orders.create(options, function(err, order) {
+      console.log("new order:",order);
+      resolve(order)
+    });
+
+   })
+ },
+ verifyPayment:(details)=>{
+   return new Promise((resolve,reject)=>{
+     var hmac = crypto.createHmac('sha256', 'a4o8rydUgGraqkBeQCpZDkn4');
+     hmac.update(details['payment[razorpay_order_id]']+'|'+details['payment[razorpay_payment_id]'])
+     hmac= hmac.digest('hex')
+     if(hmac==details['payment[razorpay_signature]']){
+      //  console.log("verified");
+     resolve()
+
+     }else{
+       reject()
+     }
+   })
+
+ },
+ changePaymentStatus:(orderId)=>{
+
+  return new Promise((resolve,reject)=>{
+    db.database().collection(collections.ORDER_COLLECTION)
+    .updateOne({_id:objectId(orderId)},{
+      $set:{
+        status:'placed'}
+
+    }).then(()=>{
+      resolve()
+    })
+   
   })
 
  }

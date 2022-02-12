@@ -117,9 +117,19 @@ router.get('/place-order',verifyLogin,async (req,res)=>{
 
 router.post('/place-order',async(req,res)=>{
   let products= await userHelpers.getCartProductList(req.body.userId)
-  let total= await userHelpers.getTotalAmount(req.body.userId)
-  userHelpers.placeOrder(req.body,products,total).then((response)=>{
-    res.json({status:true})
+   total= await userHelpers.getTotalAmount(req.body.userId)
+  userHelpers.placeOrder(req.body,products,total).then((orderId)=>{
+    // console.log(response);
+    if(req.body.payment==='online'){
+      userHelpers.generateRazorpay(orderId,total).then((response)=>{
+        res.json(response)
+
+      })
+
+    }else{
+      res.json({paymentsucess:true})
+    }
+    
 
   })
   
@@ -140,6 +150,18 @@ router.get('/ordered-products/:id',async(req,res)=>{
   // console.log(orderproducts);
 
   res.render('user/ordered-products',{orderproducts})
+})
+router.post('/verify-payment',(req,res)=>{
+  // console.log(req.body);
+  userHelpers.verifyPayment(req.body).then(()=>{
+    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(()=>{
+      console.log('success');
+      res.json({status:true})
+    })
+
+  }).catch((err)=>{
+    res.json({status:false})
+  })
 })
 
 

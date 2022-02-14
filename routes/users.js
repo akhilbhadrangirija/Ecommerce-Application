@@ -11,7 +11,7 @@ var userHelpers = require('../helpers/user-helper')
 // Checking login status
 
 const verifyLogin=(req,res,next)=>{
-  if(req.session.loggedIn){
+  if(req.session.user){
     next()
   }else{
     res.redirect('/login')
@@ -36,11 +36,11 @@ if(user){
  
 });
 router.get('/login',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user){
     res.redirect('/')
   }else{
-  res.render('user/login',{loginErr:req.session.loginErr})
-  req.session.loginErr=false
+  res.render('user/login',{loginErr:req.session.userLoginErr})
+  req.session.userLoginErr=false
   }
 });
 router.get('/signup',(req,res)=>{
@@ -50,8 +50,8 @@ router.get('/signup',(req,res)=>{
 router.post('/signup',(req,res)=>{
 
   userHelpers.addUser(req.body).then((response)=>{
-    req.session.loggedIn=true
     req.session.user=response
+    req.session.user.loggedIn=true
     res.redirect('/')
 
     
@@ -62,17 +62,17 @@ router.post('/signup',(req,res)=>{
 router.post('/login',(req,res)=>{
   userHelpers.getUser(req.body).then((respones)=>{
     if(respones.status){
-      req.session.loggedIn=true
       req.session.user=response.user
+      req.session.user.loggedIn=true
       res.redirect('/')
     }else{
-      req.session.loginErr=true
+      req.session.userLoginErr=true
       res.redirect('/login')
     }
   })
 });
 router.get('/logout',(req,res)=>{
-    req.session.destroy()
+    req.session.user=null
     res.redirect('/')
     
 })

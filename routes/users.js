@@ -11,7 +11,7 @@ var userHelpers = require('../helpers/user-helper')
 // Checking login status
 
 const verifyLogin=(req,res,next)=>{
-  if(req.session.user){
+  if(req.session.userLoggedin){
     next()
   }else{
     res.redirect('/login')
@@ -73,6 +73,7 @@ router.post('/login',(req,res)=>{
 });
 router.get('/logout',(req,res)=>{
     req.session.user=null
+    req.session.userLoggedin=false
     res.redirect('/')
     
 })

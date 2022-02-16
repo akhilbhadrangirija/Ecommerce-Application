@@ -36,26 +36,26 @@ router.post('/add-product',(req,res)=>{
 })
 
 
-// router.get('/login',(req,res)=>{
-//   if(req.session.admin){
-//     res.redirect('/')
-//   }else{
-//   res.render('admin/login',{loginErr:req.session.adminLoginErr})
-//   req.session.adminLoginErr=false
-//   }
-// });
-// router.post('/login',(req,res)=>{
-//   userHelpers.getUser(req.body).then((respones)=>{
-//     if(respones.status){
-//       req.session.user=response.user
-//       req.session.user.loggedIn=true
-//       res.redirect('/')
-//     }else{
-//       req.session.userLoginErr=true
-//       res.redirect('/login')
-//     }
-//   })
-// });
+router.get('/login',(req,res)=>{
+  if(req.session.admin){
+    res.redirect('/')
+  }else{
+  res.render('admin/login',{loginErr:req.session.adminLoginErr})
+  req.session.adminLoginErr=false
+  }
+});
+router.post('/login',(req,res)=>{
+  userHelpers.getUser(req.body).then((respones)=>{
+    if(respones.status){
+      req.session.user=response.user
+      req.session.user.loggedIn=true
+      res.redirect('/')
+    }else{
+      req.session.userLoginErr=true
+      res.redirect('/login')
+    }
+  })
+});
 
 router.get('/delete-product/:id',(req,res)=>{
   let productId=req.params.id

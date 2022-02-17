@@ -3,6 +3,7 @@ const async = require('hbs/lib/async');
 var router = express.Router();
 
 var productHelper = require('../helpers/product-helpers')
+var userHelpers = require('../helpers/user-helper')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -36,6 +37,25 @@ router.post('/add-product',(req,res)=>{
 })
 
 
+// ///////////////////////////////////////////////////////////////////////////////////
+
+router.get('/signup',(req,res)=>{
+  res.render('admin/signup')
+});
+
+router.post('/signup',(req,res)=>{
+
+  userHelpers.addAdmin(req.body).then((response)=>{
+    req.session.user=response
+    // req.session.user.loggedIn=true
+    res.redirect('/')
+
+    
+  })
+
+
+});
+
 router.get('/login',(req,res)=>{
   if(req.session.admin){
     res.redirect('/')
@@ -45,17 +65,19 @@ router.get('/login',(req,res)=>{
   }
 });
 router.post('/login',(req,res)=>{
-  userHelpers.getUser(req.body).then((respones)=>{
+  userHelpers.getAdmin(req.body).then((respones)=>{
     if(respones.status){
-      req.session.user=response.user
-      req.session.user.loggedIn=true
+      req.session.admin=response.admin
+      // req.session.admin.loggedIn=true
       res.redirect('/')
     }else{
-      req.session.userLoginErr=true
+      req.session.adminLoginErr=true
       res.redirect('/login')
     }
   })
 });
+
+////////////////////////////////////////////////////////////////////////////////
 
 router.get('/delete-product/:id',(req,res)=>{
   let productId=req.params.id
